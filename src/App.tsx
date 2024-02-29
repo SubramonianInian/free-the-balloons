@@ -33,7 +33,7 @@ function App() {
             gameOver && (
                 <>
                     <div>
-                        Hurray you freed all th balloons in {seconds} seconds
+                        Hurray you freed all the balloons in {seconds} seconds
                     </div>
                 </>
             )
