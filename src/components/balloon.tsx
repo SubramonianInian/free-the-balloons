@@ -12,11 +12,12 @@ interface Balloon {
     isFlying: boolean
 }
 interface BalloonProps {
+    start: boolean
     numberOfBalloons: number
     onPop: (numberOfBalloons: number) => void
 }
 
-const Balloon = ({ numberOfBalloons, onPop }: BalloonProps) => {
+const Balloon = ({ start, numberOfBalloons, onPop }: BalloonProps) => {
     const [divs, setDivs] = useState<Balloon[]>([])
 
     useEffect(() => {
@@ -54,13 +55,6 @@ const Balloon = ({ numberOfBalloons, onPop }: BalloonProps) => {
             )
             return colors[randomIndex]
         }
-        // const randomHSL = (): string => {
-        //     const hue = Math.floor(Math.random() * 360) // Random hue value between 0 and 359
-        //     const saturation = Math.floor(Math.random() * 101) // Random saturation value between 0 and 100
-        //     const lightness = Math.floor(Math.random() * 101) // Random lightness value between 0 and 100
-
-        //     return `hsl(${hue}, ${saturation}%, ${lightness}%)`
-        // }
 
         const newDivs: Balloon[] = []
         for (let i = 0; i < numberOfBalloons; i++) {
@@ -73,7 +67,7 @@ const Balloon = ({ numberOfBalloons, onPop }: BalloonProps) => {
             newDivs.push(newBaloonInfo)
         }
         setDivs(newDivs)
-    }, [])
+    }, [start])
 
     const handleClick = (index: number) => {
         const updatedDivs = [...divs.filter((x) => !x.isFlying)]

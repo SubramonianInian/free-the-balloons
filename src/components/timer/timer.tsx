@@ -1,40 +1,36 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
 interface TimerProps {
     startTimer: boolean
-    setCompletionInSeconds: (seconds: number) => void
+    seconds: number
+    setSeconds: (seconds: number) => void
 }
-const Timer = ({ startTimer, setCompletionInSeconds }: TimerProps) => {
-    const [seconds, setSeconds] = useState<number>(0)
-
+const Timer = ({ startTimer, seconds, setSeconds }: TimerProps) => {
     useEffect(() => {
         let interval: number = 0
+        console.log(seconds)
         if (startTimer) {
             interval = setInterval(() => {
-                setSeconds((prevSeconds) => prevSeconds + 1)
+                setSeconds(seconds + 1)
             }, 1000)
         } else if (!startTimer && seconds !== 0) {
             clearInterval(interval)
         }
 
         if (!startTimer) {
-            setCompletionInSeconds(seconds)
+            console.log(seconds)
+            setSeconds(0)
+            setSeconds(seconds)
         }
         return () => clearInterval(interval)
     }, [startTimer, seconds])
 
-    // const toggleTimer = () => {
-    //     setIsActive((prevIsActive) => !prevIsActive)
-    // }
-
-    // const resetTimer = () => {
-    //     setSeconds(0)
-    // }
-
     return (
-        <div>
-            <h1>Timer: {seconds} seconds</h1>
-        </div>
+        startTimer && (
+            <div>
+                <h1>Timer: {seconds} seconds</h1>
+            </div>
+        )
     )
 }
 
