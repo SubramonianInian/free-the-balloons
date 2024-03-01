@@ -7,7 +7,7 @@ interface TimerProps {
 }
 const Timer = ({ startTimer, seconds, setSeconds }: TimerProps) => {
     useEffect(() => {
-        let interval: number = 0
+        let interval: any = 0
         if (startTimer) {
             interval = setInterval(() => {
                 setSeconds(seconds + 1)
