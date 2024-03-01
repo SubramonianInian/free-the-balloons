@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import './balloon/balloon.css'
+import './balloon.css'
 
 interface Position {
     x: number
@@ -71,7 +71,6 @@ const Balloon = ({ start, numberOfBalloons, onPop }: BalloonProps) => {
 
     const handleClick = (index: number) => {
         const updatedDivs = [...divs.filter((x) => !x.isFlying)]
-        console.log(updatedDivs)
         if (updatedDivs[index]) {
             updatedDivs[index].isFlying = true
             setDivs(updatedDivs)

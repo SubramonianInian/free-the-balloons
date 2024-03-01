@@ -1,62 +1,57 @@
 import { useState } from 'react'
 import './App.css'
-import Balloon from './components/balloon'
+import Balloon from './components/balloon/balloon'
 import Timer from './components/timer/timer'
+import backgroundMusic from '../public/Louis Adrien - Bouncing to the Bop.mp3'
+import PlayerDataModal from './components/playerDataModal/playerDataModal'
 
+import GameCompleteModal from './components/gameCompleteModal/gameCompleteModal'
 function App() {
     const balloons = 30
+    const [showPlayerInfoModal, setShowPlayerInfoModal] =
+        useState<boolean>(true)
+    const [showGameCompleteModal, setshowGameCompleteModal] =
+        useState<boolean>(false)
+    const [audio] = useState(new Audio(backgroundMusic))
     const [start, setStart] = useState<boolean>(false)
-    const [gameOver, setGameOver] = useState<boolean>(false)
     const [seconds, setSeconds] = useState<number>(0)
     const [startTimer, setStartTimer] = useState<boolean>(true)
     const [numberOfBalloons, setNumberOfBalloons] = useState<number>(balloons)
 
-    const onPop = (numberOfBalloons: number) => {
+    const onPop = async (numberOfBalloons: number) => {
         setNumberOfBalloons(numberOfBalloons)
-        console.log(numberOfBalloons)
         if (numberOfBalloons === 0) {
-            setGameOver(true)
+            audio.pause()
             setStart(false)
             setStartTimer(false)
+            setshowGameCompleteModal(true)
         }
     }
+
     const startGame = () => {
+        setShowPlayerInfoModal(false)
+        setshowGameCompleteModal(false)
+        audio.play()
         setStart(true)
         setSeconds(0)
-        setGameOver(false)
         setStartTimer(true)
         setNumberOfBalloons(balloons)
     }
 
-    const GameOver = () => {
-        return (
-            gameOver && (
-                <>
-                    <div>
-                        Hurray you freed all the balloons in {seconds} seconds
-                    </div>
-                </>
-            )
-        )
-    }
-
-    const StartGame = () => {
-        return (
-            !start && (
-                <button
-                    onClick={() => {
-                        startGame()
-                    }}
-                >
-                    Free the Balloons
-                </button>
-            )
-        )
-    }
     return (
-        <div className="container">
-            <GameOver />
-            <StartGame />
+        <>
+            <PlayerDataModal
+                isOpen={showPlayerInfoModal}
+                startGame={startGame}
+            />
+            <GameCompleteModal
+                isOpen={showGameCompleteModal}
+                time={seconds}
+                startGame={startGame}
+            />
+            {/* <audio controls={false} autoPlay={true} loop={true}>
+                <source src={backgroundMusic} type="audio/mp3" />
+            </audio> */}
             {start && (
                 <Timer
                     startTimer={startTimer}
@@ -71,7 +66,7 @@ function App() {
                     onPop={onPop}
                 />
             )}
-        </div>
+        </>
     )
 }
 
