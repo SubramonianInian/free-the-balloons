@@ -20,6 +20,7 @@ const GameCompleteModal = ({ isOpen, time, startGame }: props) => {
     useEffect(() => {
         const getAllLeaders = async () => {
             try {
+                console.info('Saving player score')
                 const data: Player[] = []
                 const playersRef = collection(db, 'players')
                 await addDoc(playersRef, {
