@@ -1,37 +1,31 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import './playerDataModal.css'
+import '../modal.css'
 import { useRef } from 'react'
-interface props {
+import { SaveToLocalStorage } from '../../../utils/utils'
+
+interface Props {
     isOpen: boolean
     startGame: () => void
 }
 
-const PlayerDataModal = ({ isOpen, startGame }: props) => {
+const PlayerDataModal: React.FC<Props> = ({ isOpen, startGame }) => {
     const nameRef = useRef<HTMLInputElement>(null)
 
     const onSubmit = async () => {
-        // save name to firebase database
         const playerName = nameRef.current?.value
-
-        // set name to localstorage
-        localStorage.setItem('player-name', playerName as string)
-
-        // Toggle the modal
+        SaveToLocalStorage('player-name', playerName as string)
         startGame()
     }
 
     return (
         <Dialog.Root open={isOpen}>
-            {/* <Dialog.Trigger asChild>
-                <button className="Button violet">Edit profile</button>
-            </Dialog.Trigger> */}
             <Dialog.Portal>
                 <Dialog.Overlay className="DialogOverlay" />
                 <Dialog.Content className="DialogContent">
-                    <Dialog.Title className="DialogTitle">
+                    <Dialog.Title className="DialogTitle font-mono text-2xl">
                         Free the Balloons
                     </Dialog.Title>
-                    <Dialog.Description className="DialogDescription">
+                    <Dialog.Description className="DialogDescription font-mono">
                         Enter your name to start playing..!
                     </Dialog.Description>
                     <fieldset className="Fieldset">
@@ -39,7 +33,7 @@ const PlayerDataModal = ({ isOpen, startGame }: props) => {
                             ref={nameRef}
                             className="Input"
                             id="name"
-                            defaultValue=""
+                            defaultValue="John Doe"
                         />
                     </fieldset>
 
@@ -53,7 +47,7 @@ const PlayerDataModal = ({ isOpen, startGame }: props) => {
                     >
                         <Dialog.Close asChild>
                             <button
-                                className="Button green"
+                                className="Button green font-mono"
                                 onClick={() => {
                                     onSubmit()
                                 }}

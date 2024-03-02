@@ -3,34 +3,34 @@ import './App.css'
 import Balloon from './components/balloon/balloon'
 import Timer from './components/timer/timer'
 import backgroundMusic from '../public/Louis Adrien - Bouncing to the Bop.mp3'
-import PlayerDataModal from './components/playerDataModal/playerDataModal'
+import PlayerDataModal from './components/modals/playerDataModal/playerDataModal'
+import GameCompleteModal from './components/modals/gameCompleteModal/gameCompleteModal'
+import RenderIf from './components/utility/renderIf'
 
-import GameCompleteModal from './components/gameCompleteModal/gameCompleteModal'
+const audio = new Audio(backgroundMusic)
+const balloons = import.meta.env.VITE_NUMBER_OF_BALLOONS
+
 function App() {
-    const balloons = 30
-    const [showPlayerInfoModal, setShowPlayerInfoModal] =
-        useState<boolean>(true)
-    const [showGameCompleteModal, setshowGameCompleteModal] =
-        useState<boolean>(false)
-    const [audio] = useState(new Audio(backgroundMusic))
-    const [start, setStart] = useState<boolean>(false)
-    const [seconds, setSeconds] = useState<number>(0)
-    const [startTimer, setStartTimer] = useState<boolean>(true)
-    const [numberOfBalloons, setNumberOfBalloons] = useState<number>(balloons)
+    const [start, setStart] = useState(false)
+    const [seconds, setSeconds] = useState(0)
+    const [startTimer, setStartTimer] = useState(true)
+    const [numberOfBalloons, setNumberOfBalloons] = useState(balloons)
+    const [showPlayerInfoModal, setShowPlayerInfoModal] = useState(true)
+    const [showGameCompleteModal, setShowGameCompleteModal] = useState(false)
 
-    const onPop = async (numberOfBalloons: number) => {
-        setNumberOfBalloons(numberOfBalloons)
-        if (numberOfBalloons === 0) {
+    const onPop = (updatedBalloons: number) => {
+        setNumberOfBalloons(updatedBalloons)
+        if (updatedBalloons === 0) {
             audio.pause()
             setStart(false)
             setStartTimer(false)
-            setshowGameCompleteModal(true)
+            setShowGameCompleteModal(true)
         }
     }
 
     const startGame = () => {
         setShowPlayerInfoModal(false)
-        setshowGameCompleteModal(false)
+        setShowGameCompleteModal(false)
         audio.play()
         setStart(true)
         setSeconds(0)
@@ -49,23 +49,18 @@ function App() {
                 time={seconds}
                 startGame={startGame}
             />
-            {/* <audio controls={false} autoPlay={true} loop={true}>
-                <source src={backgroundMusic} type="audio/mp3" />
-            </audio> */}
-            {start && (
+            <RenderIf condition={start}>
                 <Timer
                     startTimer={startTimer}
                     seconds={seconds}
                     setSeconds={setSeconds}
                 />
-            )}
-            {start && (
                 <Balloon
                     start={start}
                     numberOfBalloons={numberOfBalloons}
                     onPop={onPop}
                 />
-            )}
+            </RenderIf>
         </>
     )
 }

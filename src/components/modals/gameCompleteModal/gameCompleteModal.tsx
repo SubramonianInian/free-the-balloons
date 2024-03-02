@@ -1,30 +1,31 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import './gameCompleteModal.css'
+import '../modal.css'
 import { ColorRing } from 'react-loader-spinner'
 import { useEffect, useState } from 'react'
 import { addDoc, collection, getDocs } from 'firebase/firestore'
-import { db } from '../../firebase/firebase'
-interface props {
+import { db } from '../../../firebase/firebase'
+import { GetFromLocalStorage } from '../../../utils/utils'
+import { Player } from '../../../interfaces/player'
+import LeaderBoard from '../../leaderBoard/leaderBoard'
+import RenderIf from '../../utility/renderIf'
+
+interface Props {
     isOpen: boolean
     time: number
     startGame: () => void
 }
 
-interface Player {
-    name: string
-    time: number
-}
-const GameCompleteModal = ({ isOpen, time, startGame }: props) => {
+const GameCompleteModal: React.FC<Props> = ({ isOpen, time, startGame }) => {
     const [leaders, setLeaders] = useState<Player[]>()
     const [isLoading, setIsLoading] = useState<boolean>(true)
+
     useEffect(() => {
         const getAllLeaders = async () => {
             try {
-                console.info('Saving player score')
                 const data: Player[] = []
                 const playersRef = collection(db, 'players')
                 await addDoc(playersRef, {
-                    name: localStorage.getItem('player-name') || '',
+                    name: GetFromLocalStorage('player-name') || '',
                     time: time,
                 }).then((doc) => console.log(doc.id))
                 const snapshot = await getDocs(playersRef)
@@ -44,13 +45,20 @@ const GameCompleteModal = ({ isOpen, time, startGame }: props) => {
             getAllLeaders()
         }
     }, [time, isOpen])
+
     return (
         <Dialog.Root open={isOpen}>
             <Dialog.Portal>
                 <Dialog.Overlay className="DialogOverlay" />
                 <Dialog.Content className="DialogContent">
-                    <Dialog.Title className="DialogTitle">
-                        Hurray...! You freed all the balloons in {time} seconds.
+                    <Dialog.Title className="DialogTitle font-serif">
+                        <h1 className="font-medium text-gray-800">
+                            Hurray...! You freed all the balloons in{' '}
+                            <span id="timer" className="text-blue-500">
+                                {time}{' '}
+                            </span>
+                            seconds. 🎉
+                        </h1>
                     </Dialog.Title>
                     <div
                         style={{
@@ -60,7 +68,7 @@ const GameCompleteModal = ({ isOpen, time, startGame }: props) => {
                             alignItems: 'center',
                         }}
                     >
-                        {isLoading && (
+                        <RenderIf condition={isLoading}>
                             <ColorRing
                                 visible={true}
                                 height="80"
@@ -76,29 +84,10 @@ const GameCompleteModal = ({ isOpen, time, startGame }: props) => {
                                     '#849b87',
                                 ]}
                             />
-                        )}
-                        {!isLoading && (
-                            <table style={{ width: '100%', marginTop: '1rem' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Rank</th>
-                                        <th>Name</th>
-                                        <th>Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {leaders?.map(
-                                        (player: Player, index: number) => (
-                                            <tr key={index}>
-                                                <td>{index + 1}</td>
-                                                <td>{player.name}</td>
-                                                <td>{player.time}</td>
-                                            </tr>
-                                        )
-                                    )}
-                                </tbody>
-                            </table>
-                        )}
+                        </RenderIf>
+                        <RenderIf condition={!isLoading}>
+                            <LeaderBoard leaders={leaders} />
+                        </RenderIf>
                         <Dialog.Close asChild>
                             <button
                                 style={{ width: '100%', marginTop: '1rem' }}
